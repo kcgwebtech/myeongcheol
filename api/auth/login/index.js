@@ -1,38 +1,34 @@
-const express = require('express');
-const crypto = require('crypto');
-const users = require('../../model/users');
-const Token = require('../../token');
-const router = express.Router();
+window.onload = function() {
+    if (document.cookie.includes('user')) {
+        // TODO JWT 유효성 검사
+        alert('이미 로그인되어 있습니다.');
+        location.href='/';
+    }
+};
 
-router.post('/', (req, res) => {
-    const user_id = req.body.user_id;
-    const user_pw = req.body.user_pw;
+function login() {
+    const id = document.querySelector('.id').value;
+    const pw = document.querySelector('.pw').value;
+    const data = {
+        user_id: id,
+        user_pw: pw,
+    };
 
-    users.findOne({
-        where: {
-            user_id: user_id
+    const request = new XMLHttpRequest();
+    request.open('POST', '/api/auth/login', true);
+    request.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    request.send(JSON.stringify(data));
+
+    request.onload = function() {
+        const response = JSON.parse(request.response);
+        console.log(response);
+
+        if (response.hasOwnProperty('error')) {
+            const message = response.error.message;
+            alert(message);
+        } else {
+            alert('로그인에 성공했습니다!');
+            location.href = '/';
         }
-    }).then((user) => {
-        if (!user) {
-            throw '존재하지 않는 계정입니다!';
-        }
-
-        const hashPassword = crypto.createHash('md5').update(user_pw).digest('hex');
-
-        if (user.user_pw !== hashPassword) {
-            throw '잘못된 비밀번호입니다!';
-        }
-
-        const tokens = Token.getTokens(user_id);
-        res.cookie('user', tokens);
-        res.json(tokens);
-    }).catch((err) => {
-        res.json({
-            error: {
-                message: err
-            }
-        });
-    });
-});
-
-module.exports = router;
+    };
+}
