@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "forever start api",
+    "stop": "forever stop api"
   },
   "repository": {
     "type": "git",
@@ -19,10 +20,8 @@
   "homepage": "https://github.com/kcgwebtech/myeongcheol#readme",
   "dependencies": {
     "express": "^4.16.4",
-    "forever": "^0.15.3"
-  },
-  "scripts":{
-    "start":"forever start api",
-    "stop":"forever stop api"
+    "forever": "^0.15.3",
+    "mysql2": "^1.6.4",
+    "sequelize": "^4.41.1"
   }
 }
